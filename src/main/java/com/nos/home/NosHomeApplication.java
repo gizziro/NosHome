@@ -1,4 +1,4 @@
-package com.nos.home.noshome;
+package com.nos.home;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
