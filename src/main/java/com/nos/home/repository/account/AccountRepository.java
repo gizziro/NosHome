@@ -1,4 +1,4 @@
-package com.nos.home.common.security.repository;
+package com.nos.home.repository.account;
 
 import com.nos.home.entity.account.AccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
-    Optional<AccountEntity> findByUsername(String username);
+    Optional<AccountEntity> findByUserId(String username);
     Optional<AccountEntity> findByEmail(String email);
 }

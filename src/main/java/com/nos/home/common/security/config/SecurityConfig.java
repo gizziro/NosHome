@@ -18,8 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig
 {
-    private final UserDetailsService userDetailsService;
-
+//    private final UserDetailsService userDetailsService;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
@@ -34,7 +34,7 @@ public class SecurityConfig
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll())
-                .userDetailsService(userDetailsService)
+                .authenticationProvider(authenticationProvider)
         ;
         return http.build();
     }

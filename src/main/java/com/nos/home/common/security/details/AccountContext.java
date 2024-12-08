@@ -1,11 +1,13 @@
 package com.nos.home.common.security.details;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 public class AccountContext implements UserDetails {
 
     //------------------------------------------------------------------------------------------------------------------
@@ -32,18 +34,14 @@ public class AccountContext implements UserDetails {
 
     @Override
     public String getUsername() {
-        return accountDto.getUsername();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+        return accountDto.getName();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !accountDto.isLocked();
     }
+
 
     @Override
     public boolean isCredentialsNonExpired() {
