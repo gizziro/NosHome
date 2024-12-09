@@ -26,6 +26,11 @@ function getInputFiles(dir) {
 
 export default defineConfig({
     root: 'src', // HTML 디렉토리를 루트로 설정
+    server: {
+        proxy: {
+          '/api': 'http://localhost:9999', // API 호출은 Spring Boot로 전달
+        },
+      },
     build: {
         rollupOptions: {
             input: getInputFiles(resolve(__dirname, 'src/js')), // src/js 내 모든 JS 파일을 자동 추가

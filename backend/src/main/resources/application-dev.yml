@@ -1,4 +1,8 @@
 spring:
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    mode: HTML
   h2.console.enabled: true
   datasource:
     url: jdbc:mysql://localhost:3306/noshouse
