@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/layout_default}">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 가입</title>
+    <link rel="icon" th:href="@{/images/favicon.ico}" type="image/x-icon">
+    <th:block layout:fragment="head">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script th:src="|/static/assets/js/login/login.js?ver=${js}|"></script>
+    </th:block>
+</head>
+<div layout:fragment="content" id="wrap" class="login">
+    <div>
+        <p>회원 가입을 완료하였습니다.</p>
+    </div>
+</div>
+</html>

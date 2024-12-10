@@ -6,6 +6,8 @@
       layout:decorate="~{user/layout/layout_default}">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>회원 가입</title>
     <link rel="icon" th:href="@{/images/favicon.ico}" type="image/x-icon">
     <th:block layout:fragment="head">
@@ -14,69 +16,70 @@
     </th:block>
 </head>
 <div layout:fragment="content" id="wrap" class="login">
-    <div class="mx-auto w-[600px] mt-[100px] bg-white rounded-xl p-10">
-        <h2 class="text-4xl font-bold text-center">회원가입</h2>
+
+    <div>
+        <h2>회원 가입</h2>
 
         <form th:action="@{/signup}" th:object="${signUpForm}" method="post" onsubmit="return validatePasswords()">
-            <div class="mt-10">
-                <label for="username" class="block text-sm font-medium leading-6 text-gray-900">아이디</label>
-                <div class="mt-2">
-                    <input class="block w-full outline-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                           type="text" th:field="*{userId}" id="username" placeholder="아이디를 입력하세요." required>
-                    <span class="text-red-500" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">에러 메시지</span>
-                </div>
+            <div class="form-row">
+                <label for="userId">아이디</label>
+                <input type="text" th:field="*{userId}" id="userId" placeholder="아이디를 입력하세요." required>
+                <span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">에러 메시지</span>
             </div>
 
-            <div class="mt-5">
-                <label for="name" class="block text-sm font-medium leading-6 text-gray-900"> 이름 </label>
-                <div class="mt-2">
-                    <input class="block w-full outline-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                           type="text" th:field="*{name}" id="name" name="name" placeholder="이름을 입력하세요." required>
-                    <span class="text-red-500" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">에러 메시지</span>
-                </div>
+            <div class="form-row">
+                <label for="name">이름</label>
+                <input type="text" th:field="*{name}" id="name" placeholder="이름을 입력하세요." required>
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">에러 메시지</span>
             </div>
 
-            <div class="mt-5">
-                <label for="password" class="block text-sm font-medium leading-6 text-gray-900">비밀번호</label>
-                <div class="mt-2">
-                    <input class="block w-full outline-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                           type="password" th:field="*{password}" name="password" id="password" placeholder="비밀번호를 입력하세요.">
-                    <span class="text-red-500" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">에러 메시지</span>
-                </div>
+            <div class="form-row">
+                <label for="email">E-mail</label>
+                <input type="email" th:field="*{email}"  name="email" id="email" placeholder="E-mail 주소를 입력하세요.">
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">에러 메시지</span>
             </div>
 
-            <div class="mt-5">
-                <label for="password" class="block text-sm font-medium leading-6 text-gray-900">비밀번호 확인</label>
-                <div class="mt-2">
-                    <input class="block w-full outline-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                           type="password" th:field="*{passwordConfirm}" placeholder="비밀번호를 한번 더 입력하세요.">
-                    <span class="text-red-500" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">에러 메시지</span>
-                </div>
+            <div class="form-row">
+                <label for="password">비밀번호</label>
+                <input type="password" th:field="*{password}" name="password" id="password" placeholder="비밀번호를 입력하세요.">
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">에러 메시지</span>
             </div>
 
-            <div class="mt-5">
-                <label for="email" class="block text-sm font-medium leading-6 text-gray-900">E-mail</label>
-                <div class="mt-2">
-                    <input type="email" th:field="*{email}"  name="email" id="email" class="block w-full outline-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="E-mail 주소를 입력하세요.">
-                    <span class="text-red-500" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">에러 메시지</span>
-                </div>
+            <div class="form-row">
+                <label for="password-confirm">비밀번호 확인</label>
+                <input type="password" th:field="*{passwordConfirm}" name="password-confirm" id="password-confirm" placeholder="비밀번호를 한번 더 입력하세요.">
+                <span th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">에러 메시지</span>
             </div>
 
-            <div class="mt-5">
-                <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Phone</label>
-                <div class="mt-2">
-                    <input type="text" th:field="*{phone}"  name="phone" id="phone" class="block w-full outline-none rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="E-mail 주소를 입력하세요.">
-                    <span class="text-red-500" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">에러 메시지</span>
-                </div>
+            <div class="form-row">
+                <label for="phone">Phone</label>
+                <input type="text" th:field="*{phone}"  name="phone" id="phone" placeholder="휴대폰 번호를 입력하세요.">
+                <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">에러 메시지</span>
+
+                <button type="button" id="sendOtpBtn">OTP 전송</button>
             </div>
+
+
 
             <div>
-                <button type="submit" class="mt-5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">회원가입</button>
+                <button type="submit">회원가입</button>
             </div>
         </form>
     </div>
 
+    <style>
+        .form-row
+        {
+            margin-bottom: 10px;
+        }
+    </style>
+
     <script>
+      // CSRF 토큰 읽기
+      const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+      const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+
       function validatePasswords() {
         const password = document.getElementById('password').value;
         const passwordConfirm = document.getElementById('password_confirm').value;
@@ -90,6 +93,45 @@
           return true;
         }
       }
+
+      // Axios 기본 설정: withCredentials 활성화
+      axios.defaults.withCredentials = true;
+      axios.defaults.headers.common[csrfHeader] = csrfToken;
+      //----------------------------------------------------------------------------------------------------------------
+      // 전화번호 입력 후 OTP 요청
+      //----------------------------------------------------------------------------------------------------------------
+      document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+        const phoneNumber = document.getElementById('phone').value;
+
+        // 전화번호 유효성 검사
+        if (!phoneNumber || !/^\d{10,11}$/.test(phoneNumber)) {
+          alert("유효한 전화번호를 입력하세요 (10~11자리 숫자)");
+          return;
+        }
+
+        // FormData 객체 생성
+        const formData = new FormData();
+        formData.append('phone', phoneNumber);
+
+        try {
+          const response = await axios.post('/sendOtp', formData, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            withCredentials: true, // 세션 정보 포함
+          });
+
+          if (response.status === 200) {
+            alert('인증번호가 전송되었습니다.');
+            document.getElementById('otpSection').style.display = 'block';
+          } else {
+            alert(`OTP 전송 실패: ${response.data.message}`);
+          }
+        } catch (error) {
+          console.error('Error sending OTP:', error);
+          alert('OTP 전송 중 오류가 발생했습니다.');
+        }
+      });
     </script>
 </div>
 </html>

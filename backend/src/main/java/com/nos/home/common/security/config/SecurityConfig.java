@@ -27,7 +27,7 @@ public class SecurityConfig
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/favicon.*","/*/icon-*").permitAll() // 정적 자원 설정
-                        .requestMatchers("/","/signup","/signin").permitAll()
+                        .requestMatchers("/","/signup","/signin", "/signupComplete", "/sendOtp").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/signin")
