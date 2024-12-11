@@ -25,6 +25,7 @@
                 <label for="userId">아이디</label>
                 <input type="text" th:field="*{userId}" id="userId" placeholder="아이디를 입력하세요." required>
                 <span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">에러 메시지</span>
+                <button type="button" id="checkIdBtn">ID 중복 체크</button>
             </div>
 
             <div class="form-row">
@@ -55,8 +56,13 @@
                 <label for="phone">Phone</label>
                 <input type="text" th:field="*{phone}"  name="phone" id="phone" placeholder="휴대폰 번호를 입력하세요.">
                 <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">에러 메시지</span>
-
                 <button type="button" id="sendOtpBtn">OTP 전송</button>
+            </div>
+
+            <div class="form-row">
+                <label for="otpNumber">OTP 번호</label>
+                <input type="text" name="otpNumber" id="otpNumber" placeholder="OTP 인증번호를 입력하세요.">
+                <button type="button" id="verifyOtpBtn">OTP 전송</button>
             </div>
 
 
@@ -80,6 +86,8 @@
       const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
 
+
+
       function validatePasswords() {
         const password = document.getElementById('password').value;
         const passwordConfirm = document.getElementById('password_confirm').value;
@@ -97,9 +105,57 @@
       // Axios 기본 설정: withCredentials 활성화
       axios.defaults.withCredentials = true;
       axios.defaults.headers.common[csrfHeader] = csrfToken;
-      //----------------------------------------------------------------------------------------------------------------
-      // 전화번호 입력 후 OTP 요청
-      //----------------------------------------------------------------------------------------------------------------
+
+      function handleError(error, customMessage = "요청 처리 중 오류가 발생했습니다.") {
+        console.error("Error details:", error);
+
+        const status = error.response?.status;
+        const errorMessage = error.response?.data?.message || customMessage;
+
+        // 상태 코드에 따른 처리
+        switch (status) {
+          case 400:
+            alert("잘못된 요청입니다. 입력 정보를 확인하세요.");
+            break;
+          case 401:
+            alert("인증이 필요합니다. 다시 로그인하세요.");
+            break;
+          case 500:
+            alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+            break;
+          default:
+            alert(errorMessage);
+            break;
+        }
+
+        // 필요하면 추가 처리 (예: 에러 로그 전송)
+      }
+
+      async function postRequest(url, data, headers = {}, withCredentials = false) {
+        try {
+          const response = await axios.post(url, data, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              ...headers,
+            },
+            withCredentials,
+          });
+
+          // 상태 코드 검증 (200~299 범위만 성공으로 간주)
+          if (response.status >= 200 && response.status < 300) {
+            return response.data; // 성공 시 데이터 반환
+          } else {
+            throw new Error(response.data?.message || "요청 처리 중 오류가 발생했습니다.");
+          }
+        } catch (error) {
+          console.error(`Error in POST request to ${url}:`, error);
+
+          // 에러 메시지를 호출자에게 전달
+          throw error.response?.data?.message || error.message || 'API 요청 중 오류 발생';
+        }
+      }
+
+
       document.getElementById('sendOtpBtn').addEventListener('click', async () => {
         const phoneNumber = document.getElementById('phone').value;
 
@@ -114,22 +170,96 @@
         formData.append('phone', phoneNumber);
 
         try {
-          const response = await axios.post('/sendOtp', formData, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            withCredentials: true, // 세션 정보 포함
-          });
+          // postRequest 호출
+          const responseData = await postRequest('/sendOtp', formData, {}, true);
+          // 성공 처리
+          alert('인증번호가 전송되었습니다.');
+          document.getElementById('sendOtpBtn').style.display = 'block';
+        } catch (error) {
+          // 공통 에러 처리 함수 호출
+          handleError(error, "OTP 전송 중 오류가 발생했습니다.");
+        }
+      });
 
-          if (response.status === 200) {
-            alert('인증번호가 전송되었습니다.');
-            document.getElementById('otpSection').style.display = 'block';
+
+      document.getElementById('checkIdBtn').addEventListener('click', async () => {
+        const userId = document.getElementById('userId').value;
+
+        // 정규식 검사: 영문, 숫자, 언더스코어, 대시(-)만 허용
+        const idRegex = /^[a-zA-Z0-9_-]*$/;
+
+        if (!userId) {
+          alert("아이디를 입력하세요.");
+          return;
+        }
+
+        if (!idRegex.test(userId)) {
+          alert("아이디는 영문, 숫자, 언더스코어(_), 하이픈(-)만 사용할 수 있습니다.");
+          return;
+        }
+
+        if (userId.length < 5 || userId.length > 20) {
+          alert("아이디는 5~20자로 입력해야 합니다.");
+          return;
+        }
+
+        // FormData 객체 생성
+        const formData = new FormData();
+        formData.append('userId', userId);
+
+        try {
+          // 공통 POST 요청 함수 사용
+          const responseData = await postRequest('/checkId', formData, {}, true);
+
+          // 성공 처리
+          if (responseData.result && responseData.result.code === "0000") {
+            alert(responseData.body || '사용 가능한 아이디입니다.');
           } else {
-            alert(`OTP 전송 실패: ${response.data.message}`);
+            const errorMessage = responseData.result?.message || '이미 사용 중인 아이디입니다.';
+            alert(errorMessage);
           }
         } catch (error) {
-          console.error('Error sending OTP:', error);
-          alert('OTP 전송 중 오류가 발생했습니다.');
+          // 공통 에러 처리 함수 호출
+          handleError(error, "ID 중복 체크 중 오류가 발생했습니다.");
+        }
+      });
+
+
+      //----------------------------------------------------------------------------------------------------------------
+      // 전화번호 입력 후 OTP 요청
+      //----------------------------------------------------------------------------------------------------------------
+
+      document.getElementById('verifyOtpBtn').addEventListener('click', async () => {
+        const otpNumber = document.getElementById('otpNumber').value;
+
+        if (!otpNumber) {
+          alert("인증번호를 입력하세요.");
+          return;
+        }
+
+        if (otpNumber.length !== 6) {
+          alert("6자리의 인증번호를 입력하세요.");
+          return;
+        }
+
+        // FormData 객체 생성
+        const formData = new FormData();
+        formData.append('otp', otpNumber);
+
+        try {
+          // 공통 POST 요청 함수 사용
+          const responseData = await postRequest('/verifyOtp', formData, {}, true);
+
+          // 성공 처리
+          if (responseData.result && responseData.result.code === "0000") {
+            alert(responseData.body || 'SMS 인증번호 일치 확인');
+          } else {
+            const errorMessage = responseData.result?.message || '올바르지 않은 인증번호 입니다.';
+            alert(errorMessage);
+          }
+        } catch (error) {
+          // 공통 에러 처리 함수 호출
+          handleError(error, "인증번호 확인 시 오류가 발생하였습니다.");
         }
       });
     </script>

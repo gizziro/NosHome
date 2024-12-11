@@ -1,7 +1,11 @@
 package com.nos.home.user.account.controller;
 
 import com.nos.home.common.response.ApiResponse;
+import com.nos.home.common.response.Result;
+import com.nos.home.common.response.code.CommonErrorCode;
+import com.nos.home.service.account.AccountService;
 import com.nos.home.user.account.dto.SignUpFormDto;
+import com.nos.home.user.account.session.SignUpCheckSession;
 import com.nos.home.user.account.validator.SignUpFormValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -12,17 +16,16 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.Random;
-import java.util.UUID;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AccountController {
-    private final SignUpFormValidator signUpFormParamsValidator;
+    private final SignUpFormValidator   signUpFormParamsValidator;
+    private final AccountService        accountService;
 
     @InitBinder("signUpForm")
     private void initBinder(WebDataBinder dataBinder) {
@@ -57,19 +60,17 @@ public class AccountController {
         //--------------------------------------------------------------------------------------------------------------
         // 회원 가입을 위한 Transaction ID 값을 확인 한다.
         //--------------------------------------------------------------------------------------------------------------
-        if(session.getAttribute("SignupTransaction") == null)
+        if(session.getAttribute("SignUpCheckSession") == null)
         {
             // UUID를 문자열로 변환
-            String transactionId = UUID.randomUUID().toString();
-            log.info("회원 가입을 위한 Transaction ID 생성 : {}", transactionId);
-            session.setAttribute("SignupTransaction", transactionId);
+            SignUpCheckSession joinCheckSession = new SignUpCheckSession();
+            log.info("회원 가입을 위한 Transaction ID 생성 : {}", joinCheckSession.getUuid());
+            session.setAttribute("SignUpCheckSession", joinCheckSession);
         }
         else {
-            String transctionId = session.getAttribute("SignupTransaction").toString();
-            log.info("Transaction ID : {}", transctionId);
+            SignUpCheckSession joinCheckSession = (SignUpCheckSession)session.getAttribute("SignUpCheckSession");
+            log.info("Transaction ID : {}", joinCheckSession.getUuid());
         }
-
-
 
         model.addAttribute("signUpForm", param);
         log.info("회원 가입 페이지 요청");
@@ -100,6 +101,27 @@ public class AccountController {
         // 회원가입 시도
     //        accountService.createUser(signUpFormParams);
 
+        if(session.getAttribute("SignUpCheckSession") != null)
+        {
+            SignUpCheckSession joinCheckSession = (SignUpCheckSession)session.getAttribute("SignUpCheckSession");
+            log.info("Transaction ID : {}", joinCheckSession.getUuid());
+
+            if(joinCheckSession.isOtpCheck())
+            {
+                log.info("회원 가입을 시도합니다.");
+                // accountService.createUser(signUpFormDto);
+            }
+            else
+            {
+                log.info("OTP 확인이 되지 않았습니다.");
+                return "redirect:/signup";
+            }
+        }
+        else
+        {
+            return "redirect:/signup";
+        }
+
         return "redirect:/signupComplete";
     }
 
@@ -111,6 +133,7 @@ public class AccountController {
     }
 
     @PostMapping("/checkId")
+    @ResponseBody
     public ApiResponse<String> checkId(@RequestParam("userId") String userId)
     {
         log.info("아이디 중복 체크 요청 : {}", userId);
@@ -123,22 +146,58 @@ public class AccountController {
     public ApiResponse<String> sendOtp(@RequestParam("phone") String phone, HttpSession session)
     {
         log.info("OTP 전송 요청 : {}", phone);
-        Random random = new Random();
-        // 100000부터 999999 사이의 랜덤 숫자 생성
-        int sixDigitNumber = 100000 + random.nextInt(900000);
-        log.info("OTP : {}", sixDigitNumber);
 
         //--------------------------------------------------------------------------------------------------------------
         // 회원 가입을 위한 Transaction ID 값을 확인 한다.
         //--------------------------------------------------------------------------------------------------------------
-        if(session.getAttribute("SignupTransaction") == null)
+        if(session.getAttribute("SignUpCheckSession") != null)
         {
-            String transctionId = session.getAttribute("SignupTransaction").toString();
-            log.info("Transaction ID : {}", transctionId);
-        }
+            Random random = new Random();
+            // 100000부터 999999 사이의 랜덤 숫자 생성
+            int sixDigitNumber = 100000 + random.nextInt(900000);
+            log.info("OTP : {}", sixDigitNumber);
 
+            SignUpCheckSession joinCheckSession = (SignUpCheckSession)session.getAttribute("SignUpCheckSession");
+            log.info("Transaction ID : {}", joinCheckSession.getUuid());
+            joinCheckSession.setOtpNumber(String.valueOf(sixDigitNumber));
+        }
+        else
+        {
+            return ApiResponse.ERROR(CommonErrorCode.INVALID_STATE);
+        }
 
         return ApiResponse.OK("OTP 전송 완료");
     }
 
+    @PostMapping("/verifyOtp")
+    @ResponseBody
+    public ApiResponse<String> verifyOtp(@RequestParam("otp") String otp, HttpSession session)
+    {
+        log.info("OTP 값 : {}", otp);
+
+        //--------------------------------------------------------------------------------------------------------------
+        // 회원 가입을 위한 Transaction ID 값을 확인 한다.
+        //--------------------------------------------------------------------------------------------------------------
+        if(session.getAttribute("SignUpCheckSession") != null)
+        {
+            SignUpCheckSession joinCheckSession = (SignUpCheckSession)session.getAttribute("SignUpCheckSession");
+            log.info("Transaction ID : {}", joinCheckSession.getUuid());
+
+            if(joinCheckSession.getOtpNumber().equals(otp))
+            {
+                log.info("OTP 값이 일치합니다. : {}",otp);
+                joinCheckSession.setOtpCheck(true);
+                return ApiResponse.OK("OTP 확인 완료");
+            }
+            else
+            {
+                log.info("OTP 값이 일치하지 않습니다. : {}",otp);
+                return ApiResponse.ERROR(CommonErrorCode.NOT_ACCEPTED);
+            }
+        }
+        else
+        {
+            return ApiResponse.ERROR(CommonErrorCode.INVALID_STATE);
+        }
+    }
 }
