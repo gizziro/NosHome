@@ -1,9 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <th:block th:fragment="basicScript">
+    <!-- 공통으로 사용되는 기본 스크립트들 -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script th:src="|/static/assets/js/jquery-2.2.4.js?ver=${js}|"></script>
+    <script th:src="@{/static/assets/js/jquery-2.2.4.js}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </th:block>
 </html>

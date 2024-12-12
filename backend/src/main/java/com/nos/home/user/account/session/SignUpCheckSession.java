@@ -14,8 +14,14 @@ public class SignUpCheckSession {
     private String      otpNumber;
 
     public SignUpCheckSession() {
-        this.uuid = UUID.randomUUID().toString();;
-        this.sendOtpCount = 0;
-        this.otpCheck = false;
+        this.uuid           = UUID.randomUUID().toString();;
+        this.sendOtpCount   = 0;
+        this.otpCheck       = false;
+    }
+
+    public void clear() {
+        this.uuid           = UUID.randomUUID().toString();
+        this.otpCheck       = false;
+        this.otpNumber      = null;
     }
 }

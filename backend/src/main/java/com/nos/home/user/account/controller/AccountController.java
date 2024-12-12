@@ -5,6 +5,7 @@ import com.nos.home.common.response.Result;
 import com.nos.home.common.response.code.CommonErrorCode;
 import com.nos.home.service.account.AccountService;
 import com.nos.home.user.account.dto.SignUpFormDto;
+import com.nos.home.user.account.dto.SignUpOtpRespDto;
 import com.nos.home.user.account.session.SignUpCheckSession;
 import com.nos.home.user.account.validator.SignUpFormValidator;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.Random;
@@ -72,16 +74,22 @@ public class AccountController {
             log.info("Transaction ID : {}", joinCheckSession.getUuid());
         }
 
-        model.addAttribute("signUpForm", param);
-        log.info("회원 가입 페이지 요청");
+        // FlashAttribute에서 전달된 signUpForm이 있는지 확인
+        if (!model.containsAttribute("signUpForm")) {
+            log.info("새로운 SignUpFormDto 객체 생성");
+            model.addAttribute("signUpForm", new SignUpFormDto());
+        } else {
+            log.info("기존 SignUpFormDto 데이터 유지");
+        }
 
         return "user/account/signup";
     }
 
     @PostMapping("/signup")
     public String signUp(@Valid @ModelAttribute("signUpForm") SignUpFormDto signUpFormDto,
-                         HttpSession session,
                          BindingResult bindingResult,
+                         HttpSession session,
+                         RedirectAttributes redirectAttributes,
                          Model model)
     {
         log.info("회원 가입 요청 (Post)");
@@ -94,12 +102,12 @@ public class AccountController {
         {
             log.info("에러가 있습니다. : 에러 개수 : {}", bindingResult.getErrorCount());
             bindingResult.getFieldErrors().forEach(error -> log.info("필드: {} 에러 메시지: {}", error.getField(), error.getDefaultMessage()));
-            model.addAttribute("signUpForm", signUpFormDto);
-            /// model.addAttribute("org.springframework.validation.BindingResult.signUpForm", bindingResult);
-            return "user/account/signup";
+
+            // bindingResult도 함께 전달
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.signUpForm", bindingResult);
+            redirectAttributes.addFlashAttribute("signUpForm", signUpFormDto);
+            return "redirect:/signup";
         }
-        // 회원가입 시도
-    //        accountService.createUser(signUpFormParams);
 
         if(session.getAttribute("SignUpCheckSession") != null)
         {
@@ -109,11 +117,16 @@ public class AccountController {
             if(joinCheckSession.isOtpCheck())
             {
                 log.info("회원 가입을 시도합니다.");
-                // accountService.createUser(signUpFormDto);
+                accountService.createUser(signUpFormDto);
+                log.info("회원가입 처리 완료");
+                joinCheckSession.clear();
             }
             else
             {
                 log.info("OTP 확인이 되지 않았습니다.");
+                // RedirectAttributes에 입력 데이터를 추가
+                redirectAttributes.addFlashAttribute("signUpForm", signUpFormDto);
+                redirectAttributes.addFlashAttribute("errorMessage", "OTP 확인이 필요합니다.");
                 return "redirect:/signup";
             }
         }
@@ -137,6 +150,11 @@ public class AccountController {
     public ApiResponse<String> checkId(@RequestParam("userId") String userId)
     {
         log.info("아이디 중복 체크 요청 : {}", userId);
+
+        if(accountService.checkId(userId))
+        {
+            return ApiResponse.ERROR(CommonErrorCode.ACCOUNT_ALREADY_EXIST);
+        }
 
         return ApiResponse.OK("사용 가능한 아이디 입니다.");
     }
@@ -171,7 +189,7 @@ public class AccountController {
 
     @PostMapping("/verifyOtp")
     @ResponseBody
-    public ApiResponse<String> verifyOtp(@RequestParam("otp") String otp, HttpSession session)
+    public ApiResponse<Object> verifyOtp(@RequestParam("otp") String otp, HttpSession session)
     {
         log.info("OTP 값 : {}", otp);
 
@@ -187,7 +205,9 @@ public class AccountController {
             {
                 log.info("OTP 값이 일치합니다. : {}",otp);
                 joinCheckSession.setOtpCheck(true);
-                return ApiResponse.OK("OTP 확인 완료");
+
+                SignUpOtpRespDto respDto = new SignUpOtpRespDto(joinCheckSession.getUuid());
+                return ApiResponse.OK(respDto);
             }
             else
             {

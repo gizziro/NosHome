@@ -4,13 +4,20 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <th:block th:replace="user/fragments/default_script :: basicScript"></th:block>
-    <th:block layout:fragment="head"></th:block>
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">노스족</title>
+
+    <!-- 공통 스크립트는 fragment로 분리 -->
+    <th:block th:fragment="common-scripts">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="/static/assets/js/jquery-2.2.4.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </th:block>
+
+    <!-- 페이지별 추가 리소스 -->
+    <th:block layout:fragment="additional-resources"></th:block>
 </head>
 <body>
     <div th:replace="user/fragments/header :: basicHeader">
-
     </div>
     <div class="container">
         <div layout:fragment="content">
