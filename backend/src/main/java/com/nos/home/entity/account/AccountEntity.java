@@ -8,10 +8,12 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "tb_user")
 public class AccountEntity {
     public enum Provider {
         LOCAL, FACEBOOK, GOOGLE, APPLE
@@ -39,7 +41,7 @@ public class AccountEntity {
     //------------------------------------------------------------------------------------------------------------------
     private String          email;              // 사용자 이메일
     private boolean         emailVerified;      // 이메일 인증 여부
-    private boolean         emailToken;         // 이메일 토큰 (회원 가입 시 이메일 인증 토큰)
+    private String          emailToken;         // 이메일 토큰 (회원 가입 시 이메일 인증 토큰)
 
     //------------------------------------------------------------------------------------------------------------------
     // 사용자 패스워드
@@ -56,6 +58,7 @@ public class AccountEntity {
     //------------------------------------------------------------------------------------------------------------------
     // 사용자 설명
     //------------------------------------------------------------------------------------------------------------------
+    @Column(length = 500)
     private String          description;
 
     //------------------------------------------------------------------------------------------------------------------
@@ -102,11 +105,21 @@ public class AccountEntity {
     public static AccountEntity of(SignUpFormDto creatDto)
     {
         AccountEntity account = new AccountEntity();
-        account.setUserId(creatDto.getUserId());            // 사용자 ID
-        account.setName(creatDto.getName());                // 사용자 이름
-        account.setEmail(creatDto.getEmail());              // 사용자 이메일
-        account.setPhone(creatDto.getPhone());              // 사용자 휴대폰번호
-        account.setPassword(creatDto.getPassword());        // 사용자 패스워드
+        account.setUserId(creatDto.getUserId());                // 사용자 ID
+        account.setPassword(creatDto.getPassword());            // 사용자 패스워드
+        account.setName(creatDto.getName());                    // 사용자 이름
+        account.setPhone(creatDto.getPhone());                  // 사용자 휴대폰번호
+        account.setDescription("");                             // 사용자 설명
+        account.setEmail(creatDto.getEmail());                  // 사용자 이메일
+        account.setEmailVerified(false);                        // 이메일 인증 여부
+        account.setEmailToken(UUID.randomUUID().toString());    // 이메일 토큰 (회원 가입 시 이메일 인증 토큰)
+        account.setUseMfa(false);                               // MFA 사용 여부
+        account.setEnabled(true);                               // 계정 활성화 여부
+        account.setFailedLoginAttempts(0);                      // [로그인 실패 및 그에 따른 잠금 처리 여부]
+        account.setLocked(false);                               // 계정 잠금 여부
+        account.setLockedDate(null);                            // 계정 잠금 날짜
+        account.setProvider(Provider.LOCAL);                    // 가입 방법
+
         return account;
     }
 }

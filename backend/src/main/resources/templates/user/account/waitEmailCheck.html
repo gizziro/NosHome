@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/layout_default}">
+
+<th:block layout:fragment="additional-resources">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <script th:src="@{/js/account/login.js}"></script>
+</th:block>
+
+<div layout:fragment="content" class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">이메일 인증</h2>
+            <p class="mt-2 text-sm text-gray-600">이메일 인증 이후 사용 가능합니다.</p>
+        </div>
+
+    </div>
+</div>
+</html>

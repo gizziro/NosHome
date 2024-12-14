@@ -8,10 +8,13 @@ import java.time.LocalDateTime;
 @Getter
 public class AccountDto {
     private Long        userSeq;
-    private String      userId;
-    private String      name;
-    private String      password;
-    private String      email;
+    private String          userId;
+    private String          name;
+    private String          password;
+    private String          email;              // 사용자 이메일
+    private boolean         emailVerified;      // 이메일 인증 여부
+    private String          emailToken;         // 이메일 토큰 (회원 가입 시 이메일 인증 토큰)
+
 
     private String      phone;
     private boolean     useMfa;
@@ -24,6 +27,10 @@ public class AccountDto {
     private boolean         locked;
     private LocalDateTime   lockedDate;
 
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
 
     public static AccountDto of(AccountEntity entity)
     {
