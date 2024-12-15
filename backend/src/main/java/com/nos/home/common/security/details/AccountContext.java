@@ -1,5 +1,6 @@
 package com.nos.home.common.security.details;
 
+import lombok.Data;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,19 +8,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
+@Data
 public class AccountContext implements UserDetails {
 
     //------------------------------------------------------------------------------------------------------------------
     //
     //------------------------------------------------------------------------------------------------------------------
-    private AccountDto              accountDto;
+    public final AccountDto account;
+
+    //------------------------------------------------------------------------------------------------------------------
+    //
+    //------------------------------------------------------------------------------------------------------------------
     private List<GrantedAuthority>  authorities;
 
-    public AccountContext(AccountDto accountDto, List<GrantedAuthority> authorities) {
-        this.accountDto = accountDto;
-        this.authorities = authorities;
+    public AccountContext(AccountDto user) {
+        this.account = user;
+    }
 
+    public AccountContext(AccountDto accountDto, List<GrantedAuthority> authorities) {
+        this.account = accountDto;
+        this.authorities = authorities;
     }
 
     @Override
@@ -29,19 +37,23 @@ public class AccountContext implements UserDetails {
 
     @Override
     public String getPassword() {
-        return accountDto.getPassword();
+        return account.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return accountDto.getName();
+        return account.getName();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return !accountDto.isLocked();
+        return !account.isLocked();
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;  // 또는 실제 계정 만료 여부에 따른 로직
+    }
 
     @Override
     public boolean isCredentialsNonExpired() {
@@ -51,5 +63,9 @@ public class AccountContext implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public AccountDto getAccount() {  // Getter 추가
+        return this.account;
     }
 }

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/layout/layout_default}">
+
+<th:block layout:fragment="additional-resources">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <script th:src="@{/js/account/mfa-verification.js}"></script>
+</th:block>
+
+<div layout:fragment="content" class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">SMS 인증</h2>
+            <p class="mt-2 text-sm text-gray-600">보안을 위해 SMS 인증이 필요합니다.</p>
+            <p class="mt-1 text-sm text-gray-600" th:text="${'전화번호: ' + phone}"></p>
+        </div>
+
+        <div class="space-y-6">
+            <!-- 인증번호 입력 -->
+            <div>
+                <label for="otpCode" class="block text-sm font-medium text-gray-700">인증번호</label>
+                <div class="mt-1 flex gap-3">
+                    <input type="text" id="otpCode" name="otpCode"
+                           class="flex-1 rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                           placeholder="인증번호 6자리를 입력하세요" maxlength="6">
+                    <button type="button" id="resendBtn"
+                            class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        재전송
+                    </button>
+                </div>
+                <!-- 타이머 표시 -->
+                <div id="timer" class="mt-2 text-sm text-gray-500"></div>
+            </div>
+
+            <!-- 에러 메시지 -->
+            <div id="errorMessage" class="rounded-md bg-red-50 p-4 hidden">
+                <div class="flex">
+                    <div class="text-sm text-red-700">
+                        잘못된 인증번호입니다. 다시 시도해주세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 인증 버튼 -->
+            <div>
+                <button type="button" id="verifyBtn"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    인증하기
+                </button>
+            </div>
+
+            <!-- 설명 -->
+            <div class="mt-4 text-center text-sm text-gray-600">
+                <p>인증번호가 전송되지 않았나요?</p>
+                <p class="mt-1">스팸 메시지를 확인하시거나, [재전송] 버튼을 눌러주세요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
