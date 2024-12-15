@@ -11,6 +11,8 @@
         <!-- 로그인 상태 확인 -->
         <div sec:authorize="isAuthenticated()">
             안녕하세요, <span th:text="${#authentication.name}"></span> 님!
+            <a href="/me">(일반)내 정보 확인</a>
+            <a href="/admin/main">(관리자) 관리자 화면 접속)</a>
             <a href="/logout">로그아웃</a>
         </div>
         <div sec:authorize="isAnonymous()">

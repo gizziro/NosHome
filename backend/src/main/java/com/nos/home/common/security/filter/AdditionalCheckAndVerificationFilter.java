@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,9 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
 
-    private final AccountRepository accountRepository;
-
-    private final static List<String> EXCLUDED_URLS = Arrays.asList(
+    private final AccountRepository     accountRepository;
+    private final RequestCache          requestCache = new HttpSessionRequestCache();
+    private final static List<String>   EXCLUDED_URLS = Arrays.asList(
             "/waitEmailCheck",
             "/verifyEmail",
             "/resendEmailVerification",
@@ -37,7 +39,10 @@ public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
             //----------------------------------------------------------------------------------------------------------
             "/waitMfaCheck",        // SMS 인증 대기 페이지
             "/verifyMfa",           // SMS 인증 확인
-            "/resendMfa"            // SMS 인증 재전송
+            "/waitAdminMfaCheck",   // 관리자 OTP 인증 대기 페이지
+            "/verifyAdminMfa",      // 관리자 OTP 인증 확인
+            "/resendMfa",           // SMS 인증 재전송
+            "/resendAdminMfa"       // 관리자 OTP 인증 재전송
     );
 
     @Override
@@ -60,10 +65,11 @@ public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
         {
             AccountDto accountDto = (AccountDto)authentication.getPrincipal();
 
+            //----------------------------------------------------------------------------------------------------------
             // 이메일 인증이 되어있지 않다면
+            //----------------------------------------------------------------------------------------------------------
             if (!accountDto.isEmailVerified())
             {
-
                 AccountEntity accountEntity = accountRepository.findByUserId(accountDto.getUserId());
 
                 if(!accountEntity.isEmailVerified()) {
@@ -75,14 +81,40 @@ public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
                 }
             }
 
-            String      path            = request.getRequestURI();
+            //----------------------------------------------------------------------------------------------------------
+            // MFA 인증 여부 확인
+            //----------------------------------------------------------------------------------------------------------
+            String      path            = request.getRequestURI();;
             HttpSession session         = request.getSession();
             Boolean     isMfaVerified   = (Boolean) session.getAttribute("MFA_VERIFIED");
 
-            // MFA가 필요한 경우 체크
-            if (needsMfaVerification(accountDto, path) && !Boolean.TRUE.equals(isMfaVerified))
+            //==========================================================================================================
+            // [Step.02] 로그인 시 MFA 필수 여부 체크
+            // 1. MFA 사용 여부가 true 일 경우
+            // 2. MFA 인증 여부가 false 일 경우
+            //==========================================================================================================
+            if (accountDto.isUseMfa() && !accountDto.isMfaOtpVerified())
             {
+                //------------------------------------------------------------------------------------------------------
+                // 현재 요청을 저장
+                //------------------------------------------------------------------------------------------------------
+                requestCache.saveRequest(request, response);
                 response.sendRedirect("/waitMfaCheck");
+                return;
+            }
+
+            //==========================================================================================================
+            // [Step.03] 관리자 페이지에서 MFA 필수 여부 체크
+            // 1. 관리자 페이지 접근시
+            // 2. 관리자 OTP 인증 여부가 false 일 경우
+            //==========================================================================================================
+            if(path.startsWith("/admin/") && !accountDto.isAdminOtpVerified())
+            {
+                //------------------------------------------------------------------------------------------------------
+                // 현재 요청을 저장
+                //------------------------------------------------------------------------------------------------------
+                requestCache.saveRequest(request, response);
+                response.sendRedirect("/waitAdminMfaCheck");
                 return;
             }
         }

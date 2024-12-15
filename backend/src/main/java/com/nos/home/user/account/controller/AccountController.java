@@ -3,6 +3,7 @@ package com.nos.home.user.account.controller;
 import com.nos.home.common.response.ApiResponse;
 import com.nos.home.common.response.Result;
 import com.nos.home.common.response.code.CommonErrorCode;
+import com.nos.home.common.sms.SmsService;
 import com.nos.home.service.account.AccountService;
 import com.nos.home.user.account.dto.SignUpFormDto;
 import com.nos.home.user.account.dto.SignUpOtpRespDto;
@@ -28,6 +29,7 @@ import java.util.Random;
 public class AccountController {
     private final SignUpFormValidator   signUpFormParamsValidator;
     private final AccountService        accountService;
+    private final SmsService            smsService;
 
     @InitBinder("signUpForm")
     private void initBinder(WebDataBinder dataBinder) {
@@ -170,14 +172,20 @@ public class AccountController {
         //--------------------------------------------------------------------------------------------------------------
         if(session.getAttribute("SignUpCheckSession") != null)
         {
-            Random random = new Random();
+            //----------------------------------------------------------------------------------------------------------
             // 100000부터 999999 사이의 랜덤 숫자 생성
-            int sixDigitNumber = 100000 + random.nextInt(900000);
-            log.info("OTP : {}", sixDigitNumber);
+            //----------------------------------------------------------------------------------------------------------
+            Random  random          = new Random();
+            int     sixDigitNumber  = 100000 + random.nextInt(900000);
+            smsService.sendOne(phone, "인증번호는 [" + sixDigitNumber + "] 입니다.");
+            //----------------------------------------------------------------------------------------------------------
 
+            //----------------------------------------------------------------------------------------------------------
+            // 세선에 OTP 번호를 저장
+            //----------------------------------------------------------------------------------------------------------
             SignUpCheckSession joinCheckSession = (SignUpCheckSession)session.getAttribute("SignUpCheckSession");
-            log.info("Transaction ID : {}", joinCheckSession.getUuid());
             joinCheckSession.setOtpNumber(String.valueOf(sixDigitNumber));
+            log.info("Transaction ID : {}", joinCheckSession.getUuid());
         }
         else
         {
