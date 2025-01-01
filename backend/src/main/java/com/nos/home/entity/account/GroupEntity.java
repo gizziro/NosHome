@@ -3,7 +3,7 @@ package com.nos.home.entity.account;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-@Entity
+//@Entity
 @Getter
 public class GroupEntity {
     @Id

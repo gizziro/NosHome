@@ -133,7 +133,7 @@ public class AdditionalCheckAndVerificationController {
         if(account.GenerateAdminOtpNumber())
         {
             log.info("OTP 번호 신규 전송 : {}", account.getAdminOtpNumber());
-            smsService.sendOne(account.getPhone(), String.format("NOS 인증번호는 [%s] 입니다.", account.getAdminOtpNumber()));
+            // smsService.sendOne(account.getPhone(), String.format("NOS 인증번호는 [%s] 입니다.", account.getAdminOtpNumber()));
         }
         //--------------------------------------------------------------------------------------------------------------
         model.addAttribute("phone", account.getPhone());

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="common_header(title,links,scripts, metas)">
+    <!-- title을 통째로 replace -->
+    <th:block th:replace="${title}">공통 타이틀</th:block>
+
+    <!-- 공통 메타태그 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 페이지별 메타 태그 -->
+    <th:block th:insert="${metas}" th:if="${metas != null}" />
+
+    <!-- 공통 스타일 시트 -->
+    <link th:href="@{/css/fonts/inter/inter.css}" href="/css/fonts/inter/inter.css" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/icons/phosphor/styles.min.css}" href="/css/icons/phosphor/styles.min.css" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/ltr/all.min.css}" id="stylesheet" rel="stylesheet" type="text/css">
+    <!-- /공통 스타일 시트 -->
+
+    <!-- 공통 JavaScript -->
+    <script th:src="@{/js/demo_configurator.js}" src="/js/demo_configurator.js"></script>
+    <script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}" src="/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <!-- /core JS files -->
+
+    <!-- 페이지별 추가 CSS -->
+    <th:block th:insert="${links}" th:if="${links != null}" />
+    <!-- 페이지별 추가 JavaScript -->
+    <th:block th:insert="${scripts}" th:if="${scripts != null}" />
+</head>
+
+</html>
