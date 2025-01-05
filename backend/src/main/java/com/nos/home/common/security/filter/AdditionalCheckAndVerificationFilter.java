@@ -2,7 +2,7 @@ package com.nos.home.common.security.filter;
 
 import com.nos.home.common.security.details.AccountDto;
 import com.nos.home.entity.account.AccountEntity;
-import com.nos.home.repository.account.AccountRepository;
+import com.nos.home.module.account.repository.AccountRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -60,7 +61,9 @@ public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
         // SecurityContextHolder에 저장된 Authentication 객체를 가져온다.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        //--------------------------------------------------------------------------------------------------------------
         // 인증된 사용자가 존재하고, 인증된 상태라면
+        //--------------------------------------------------------------------------------------------------------------
         if (authentication != null && authentication.isAuthenticated())
         {
             AccountDto accountDto = (AccountDto)authentication.getPrincipal();
@@ -70,14 +73,24 @@ public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
             //----------------------------------------------------------------------------------------------------------
             if (!accountDto.isEmailVerified())
             {
-                AccountEntity accountEntity = accountRepository.findByUserId(accountDto.getUserId());
+                //------------------------------------------------------------------------------------------------------
+                // 사용자 정보 조회
+                //------------------------------------------------------------------------------------------------------
+                Optional<AccountEntity> accountEntity = accountRepository.findByUserId(accountDto.getUserId());
 
-                if(!accountEntity.isEmailVerified()) {
-                    response.sendRedirect("/waitEmailCheck");
-                    return;
-                }
-                else {
-                    accountDto.setEmailVerified(true);
+                if(accountEntity.isPresent())
+                {
+                    //--------------------------------------------------------------------------------------------------
+                    // 다시 한번 DB에서 조회하여 이메일 인증 여부를 확인 (최초 회원가입 이후, 이메일 인증을 수행하였을 경우 대비)
+                    //--------------------------------------------------------------------------------------------------
+                    if(!accountEntity.get().isEmailVerified())
+                    {
+                        response.sendRedirect("/waitEmailCheck");
+                        return;
+                    }
+                    else {
+                        accountDto.setEmailVerified(true);
+                    }
                 }
             }
 

@@ -9,8 +9,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- 페이지별 메타 태그 -->
-    <th:block th:insert="${metas}" th:if="${metas != null}" />
+    <!--/* 페이지별 메타 태그 */-->
+    <th:block th:each="meta : ${metas}" th:if="${metas != null}">
+        <th:block th:replace="${meta}" />
+    </th:block>
 
     <!-- 공통 스타일 시트 -->
     <link th:href="@{/css/fonts/inter/inter.css}" href="/css/fonts/inter/inter.css" rel="stylesheet" type="text/css">
@@ -23,10 +25,13 @@
     <script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}" src="/js/bootstrap/bootstrap.bundle.min.js"></script>
     <!-- /core JS files -->
 
-    <!-- 페이지별 추가 CSS -->
-    <th:block th:insert="${links}" th:if="${links != null}" />
-    <!-- 페이지별 추가 JavaScript -->
-    <th:block th:insert="${scripts}" th:if="${scripts != null}" />
+    <!--/* 페이지별 추가 CSS */-->
+    <th:block th:each="link : ${links}" th:if="${links != null}">
+        <th:block th:replace="${link}" />
+    </th:block>
+    <!--/* 페이지별 추가 JavaScript */-->
+    <th:block th:each="script : ${scripts}" th:if="${scripts != null}">
+        <th:block th:replace="${script}" />
+    </th:block>
 </head>
-
 </html>

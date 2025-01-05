@@ -12,7 +12,6 @@
 
 const App = function () {
 
-
     // Utils
     // -------------------------
 
@@ -104,9 +103,9 @@ const App = function () {
     const sidebarMainToggle = function() {
 
         // Elements
-        const sidebarMainElement = document.querySelector('.sidebar-main'),
-              sidebarMainRestElements = document.querySelectorAll('.sidebar:not(.sidebar-main):not(.sidebar-component)'),
-              sidebarMainDesktopToggler = document.querySelectorAll('.sidebar-main-toggle'),
+        const sidebarMainElement                    = document.querySelector('.sidebar-main');
+        const sidebarMainRestElements     = document.querySelectorAll('.sidebar:not(.sidebar-main):not(.sidebar-component)');
+        const sidebarMainDesktopToggler   = document.querySelectorAll('.sidebar-main-toggle'),
               sidebarMainMobileToggler = document.querySelectorAll('.sidebar-mobile-main-toggle'),
               sidebarCollapsedClass = 'sidebar-collapsed',
               sidebarMobileExpandedClass = 'sidebar-mobile-expanded';
