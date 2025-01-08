@@ -3,6 +3,7 @@ package com.nos.home.common;
 import com.nos.home.common.module.BaseModule;
 import com.nos.home.common.module.ModulePermission;
 import com.nos.home.common.module.PermissionManageService;
+import com.nos.home.common.util.ModuleHelper;
 import com.nos.home.module.account.repository.AccountRepository;
 import com.nos.home.module.account.service.AccountGroupService;
 import com.nos.home.module.account.service.AccountService;
@@ -13,13 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -33,6 +31,7 @@ public class SystemInitializer {
     private final AccountService            accountService;
     private final AccountGroupService       accountGroupService;
     private final PermissionManageService   permissionManageService;
+
 
     //------------------------------------------------------------------------------------------------------------------
     // 관리자 초기 계정 정보
@@ -51,6 +50,7 @@ public class SystemInitializer {
     @PostConstruct
     public void initialize()
     {
+
         //--------------------------------------------------------------------------------------------------------------
         // 기본 그룹 존재여부를 체크 하고, 없다면 기본그룹을 생성한다.
         //--------------------------------------------------------------------------------------------------------------

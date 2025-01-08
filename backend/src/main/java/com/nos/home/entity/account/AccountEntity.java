@@ -1,6 +1,6 @@
 package com.nos.home.entity.account;
 
-import com.nos.home.view.user.account.dto.SignUpFormDto;
+import com.nos.home.user.account.dto.SignUpFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

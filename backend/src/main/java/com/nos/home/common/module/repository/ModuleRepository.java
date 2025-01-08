@@ -1,6 +1,6 @@
 package com.nos.home.common.module.repository;
 
-import com.nos.home.entity.module.ModuleEntity;
+import com.nos.home.common.module.entity.ModuleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

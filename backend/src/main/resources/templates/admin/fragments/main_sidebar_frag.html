@@ -54,6 +54,23 @@
             </ul>
           </li>
 
+          <!-- 회원/그룹/역할 관리 -->
+          <li class="nav-item nav-item-submenu">
+            <a href="#" class="nav-link">
+              <i class="ph-layout"></i>
+              <span>메뉴 및 모듈</span>
+            </a>
+            <ul class="nav-group-sub collapse">
+              <li class="nav-item"><a th:href="@{/admin/sitemap/list}" href="/admin/sitemap/list" class="nav-link active">사이트맵 관리</a></li>
+              <li class="nav-item"><a th:href="@{/admin/menu/register}" href="/admin/menu/register" class="nav-link">메뉴 관리</a></li>
+              <li class="nav-item"><a th:href="@{/admin/permission/list}" href="/admin/member/list" class="nav-link">권한 관리</a></li>
+              <li class="nav-item"><a th:href="@{/admin/member/send-sms}" href="/admin/member/list" class="nav-link">SMS 전송</a></li>
+              <li class="nav-item"><a th:href="@{/admin/member/send-email}" href="/admin/member/send-email" class="nav-link">이메일 발송</a></li>
+            </ul>
+          </li>
+
+
+
 
           <li class="nav-item nav-item-submenu">
             <a href="#" class="nav-link">

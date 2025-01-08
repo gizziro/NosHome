@@ -199,3 +199,35 @@ CREATE TABLE tb_user_permission_mapping (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='사용자 권한 매핑 테이블';
 
 
+CREATE TABLE `tb_sitemap` (
+    sitemap_seq        BIGINT AUTO_INCREMENT        NOT NULL COMMENT '사이트 맵 Sequence 번호',
+    title              VARCHAR(255) NOT NULL COMMENT '사이트맵 이름',
+    description        VARCHAR(255) COMMENT '사이트맵 설명',
+    PRIMARY KEY (sitemap_seq)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='사이트맵 엔터티 테이블';
+
+
+CREATE TABLE tb_menu (
+    menu_seq           BIGINT AUTO_INCREMENT NOT NULL COMMENT '메뉴 시퀀스 번호',
+    sitemap_seq        BIGINT NOT NULL COMMENT '사이트맵 시퀀스 번호',
+    parent_menu_seq    BIGINT COMMENT '상위 메뉴 시퀀스 번호',
+    module_id          VARCHAR(50) COMMENT '모듈 유형',
+    instance_id        VARCHAR(50) COMMENT '모듈 인스턴스 ID',
+    title              VARCHAR(100) NOT NULL COMMENT '메뉴명',
+    url                VARCHAR(500) COMMENT '메뉴 URL',
+    target             VARCHAR(30) COMMENT '타겟',
+    description        VARCHAR(500) COMMENT '메뉴 설명',
+    icon               VARCHAR(100) COMMENT '메뉴 아이콘',
+    depth              INT NOT NULL DEFAULT 1 COMMENT '메뉴 수준',
+    position           INT NOT NULL DEFAULT 0 COMMENT '메뉴 순서',
+    enabled            BOOLEAN DEFAULT TRUE COMMENT '메뉴 활성화 여부',
+    created_by         VARCHAR(100) NOT NULL COMMENT '생성자',
+    created_at         DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
+    updated_by         VARCHAR(100) COMMENT '수정자',
+    updated_at         DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
+    PRIMARY KEY (menu_seq),
+    FOREIGN KEY (sitemap_seq) REFERENCES tb_sitemap(sitemap_seq),
+    FOREIGN KEY (parent_menu_seq) REFERENCES tb_menu(menu_seq)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='메뉴 정보';
+
+

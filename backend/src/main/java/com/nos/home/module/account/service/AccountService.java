@@ -6,7 +6,7 @@ import com.nos.home.entity.account.UserGroupMappingEntity;
 import com.nos.home.module.account.repository.AccountGroupRepository;
 import com.nos.home.module.account.repository.AccountRepository;
 import com.nos.home.module.account.repository.UserGroupMappingRepository;
-import com.nos.home.view.user.account.dto.SignUpFormDto;
+import com.nos.home.user.account.dto.SignUpFormDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

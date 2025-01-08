@@ -1,7 +1,8 @@
 package com.nos.home.common.module;
 
-import com.nos.home.entity.module.ModuleEntity;
-import com.nos.home.entity.module.ModulePermissionEntity;
+import com.nos.home.common.util.ModuleHelper;
+import com.nos.home.common.module.entity.ModuleEntity;
+import com.nos.home.common.module.entity.ModulePermissionEntity;
 import com.nos.home.common.module.repository.ModulePermissionRepository;
 import com.nos.home.common.module.repository.ModuleRepository;
 import jakarta.annotation.PostConstruct;
@@ -26,13 +27,17 @@ public class ModuleManager {
     private final ApplicationContext            applicationContext;
     private final ModuleRepository              moduleRepository;
     private final ModulePermissionRepository    permissionRepository;
+    private final ModuleHelper                  moduleHelper;
 
     @PostConstruct
     public void initialize() {
         log.debug("========================================");
-        // 모든 BaseModule 구현체를 찾아서 처리
-        Map<String, BaseModule> modules = applicationContext.getBeansOfType(BaseModule.class);
-        syncModules(modules.values());
+        //--------------------------------------------------------------------------------------------------------------
+        // 모듈 목록 초기화
+        //--------------------------------------------------------------------------------------------------------------
+        moduleHelper.initializeModules();
+
+        syncModules(moduleHelper.getModules());
         log.debug("========================================");
     }
 

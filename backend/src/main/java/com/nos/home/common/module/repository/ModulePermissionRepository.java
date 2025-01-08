@@ -1,6 +1,6 @@
 package com.nos.home.common.module.repository;
 
-import com.nos.home.entity.module.ModulePermissionEntity;
+import com.nos.home.common.module.entity.ModulePermissionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;

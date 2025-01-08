@@ -1,0 +1,83 @@
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout/layout_default}">
+<head>
+  <title>사이트맵 관리</title>
+  <!-- CSRF 토큰 -->
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+  <!-- 페이지별 추가 CSS -->
+  <!--  <link rel="stylesheet" th:href="@{/css/example-page.css}" />-->
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</head>
+<body>
+<div layout:fragment="content" id="content" class="content">
+  <div class="card">
+    <div class="container mt-5">
+      <h1 class="mb-4">메뉴 추가</h1>
+      <form action="/menu/save" method="post">
+        <!-- Sitemap Sequence -->
+        <div class="mb-3">
+          <label for="sitemapSeq" class="form-label">사이트맵 시퀀스</label>
+          <input type="number" id="sitemapSeq" name="sitemapSeq" class="form-control" placeholder="사이트맵 시퀀스를 입력하세요" required>
+        </div>
+        <!-- Parent Menu -->
+        <div class="mb-3">
+          <label for="parentMenuSeq" class="form-label">상위 메뉴 시퀀스</label>
+          <input type="number" id="parentMenuSeq" name="parentMenuSeq" class="form-control" placeholder="상위 메뉴 시퀀스를 입력하세요 (필요 시)">
+        </div>
+        <!-- Title -->
+        <div class="mb-3">
+          <label for="title" class="form-label">메뉴명</label>
+          <input type="text" id="title" name="title" class="form-control" maxlength="100" placeholder="메뉴명을 입력하세요" required>
+        </div>
+        <!-- URL -->
+        <div class="mb-3">
+          <label for="url" class="form-label">메뉴 URL</label>
+          <input type="url" id="url" name="url" class="form-control" maxlength="500" placeholder="메뉴 URL을 입력하세요">
+        </div>
+        <!-- Target -->
+        <div class="mb-3">
+          <label for="target" class="form-label">타겟</label>
+          <input type="text" id="target" name="target" class="form-control" maxlength="30" placeholder="_self, _blank 등">
+        </div>
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="description" class="form-label">메뉴 설명</label>
+          <textarea id="description" name="description" class="form-control" maxlength="500" rows="3" placeholder="메뉴 설명을 입력하세요"></textarea>
+        </div>
+        <!-- Icon -->
+        <div class="mb-3">
+          <label for="icon" class="form-label">메뉴 아이콘</label>
+          <input type="text" id="icon" name="icon" class="form-control" maxlength="100" placeholder="아이콘 경로나 이름을 입력하세요">
+        </div>
+        <!-- Depth -->
+        <div class="mb-3">
+          <label for="depth" class="form-label">메뉴 수준 (Depth)</label>
+          <input type="number" id="depth" name="depth" class="form-control" min="1" value="1" required>
+        </div>
+        <!-- Position -->
+        <div class="mb-3">
+          <label for="position" class="form-label">메뉴 순서</label>
+          <input type="number" id="position" name="position" class="form-control" min="0" value="0" required>
+        </div>
+        <!-- Enabled -->
+        <div class="mb-3 form-check">
+          <input type="checkbox" id="enabled" name="enabled" class="form-check-input" checked>
+          <label for="enabled" class="form-check-label">메뉴 활성화</label>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">메뉴 추가</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript" th:fragment="scripts">
+
+</script>
+</body>
+</html>

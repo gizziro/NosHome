@@ -121,15 +121,15 @@ public class AdditionalCheckAndVerificationFilter extends OncePerRequestFilter {
             // 1. 관리자 페이지 접근시
             // 2. 관리자 OTP 인증 여부가 false 일 경우
             //==========================================================================================================
-            if(path.startsWith("/admin/") && !accountDto.isAdminOtpVerified())
-            {
-                //------------------------------------------------------------------------------------------------------
-                // 현재 요청을 저장
-                //------------------------------------------------------------------------------------------------------
-                requestCache.saveRequest(request, response);
-                response.sendRedirect("/waitAdminMfaCheck");
-                return;
-            }
+//            if( path.startsWith("/admin/") && !accountDto.isAdminOtpVerified())
+//            {
+//                //------------------------------------------------------------------------------------------------------
+//                // 현재 요청을 저장
+//                //------------------------------------------------------------------------------------------------------
+//                requestCache.saveRequest(request, response);
+//                response.sendRedirect("/waitAdminMfaCheck");
+//                return;
+//            }
         }
 
         filterChain.doFilter(request, response);
