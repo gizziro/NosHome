@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class AdminMainController {
 
-    @GetMapping("/main")
+    @GetMapping("/")
     public String index(){
-        return "/admin/index";
+        return "/admin/admin_vue";
     }
 }
