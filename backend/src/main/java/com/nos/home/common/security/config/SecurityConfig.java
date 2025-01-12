@@ -4,9 +4,11 @@ import com.nos.home.common.security.filter.AdditionalCheckAndVerificationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -16,7 +18,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig
 {
-//    private final UserDetailsService userDetailsService;
     private final AuthenticationProvider                authenticationProvider;
     private final AdditionalCheckAndVerificationFilter  additionalCheckAndVerificationFilter;
 
@@ -29,6 +30,7 @@ public class SecurityConfig
                         .requestMatchers("/","/signup","/signin", "/signupComplete", "/sendOtp", "/verifyOtp", "/checkId",
                                 "/waitEmailCheck", "/verifyEmail", "/resendEmailVerification",
                                 "/waitSmsCheck").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/signin")
@@ -43,6 +45,21 @@ public class SecurityConfig
                 .authenticationProvider(authenticationProvider)
                 .addFilterAfter(additionalCheckAndVerificationFilter, SecurityContextPersistenceFilter.class)
         ;
+        return http.build();
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception
+    {
+        http
+                .securityMatcher("/api/v1/admin/**")
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/css/**", "/js/**", "/favicon.*","/*/icon-*").permitAll() // 정적 자원 설정
+                    .anyRequest().permitAll()
+                )
+                .csrf(AbstractHttpConfigurer::disable);
+
         return http.build();
     }
 

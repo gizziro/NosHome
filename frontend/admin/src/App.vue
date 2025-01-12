@@ -1,32 +1,56 @@
 <script setup>
 import { ref, toRef} from "vue";
 import { storeToRefs } from "pinia";
-import MainSideBar from "@/components/common/MainSideBar.vue";
+import MainSideBar from "@/components/layout/MainSideBar.vue";
 import { RouterView } from "vue-router";
-import {useMenuStore} from "@/stores/menuStore.js";
-import MainNavBar from "@/components/common/MainNavBar.vue";
 
-const menuStore = useMenuStore();
+import MainNavBar from "@/components/layout/MainNavBar.vue";
 
-const { isSidebarExpanded } = storeToRefs(menuStore);
+//----------------------------------------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------------------------------------
+import {useAuthStore} from "@/stores/authStore.js";
+import {useLayoutStore} from "@/stores/layoutStore.js";
+import {useCommonStore} from "@/stores/commonStore.js";
+import LoginForm from "@/components/login/LoginForm.vue";
+
+const authStore = useAuthStore();
+const commonStore = useCommonStore();
+const layoutStore = useLayoutStore();
+
+authStore.refreshCommonData();
+const { isSynced, isLogin } = storeToRefs(authStore);
+const { isSidebarExpanded } = storeToRefs(layoutStore);
 
 </script>
 
 <template>
-  <div class="page-content flex relative">
-    <!-- Main sidebar -->
-    <MainSideBar @toggle="toggleSidebar" />
-    <!-- Main content -->
-    <div class="flex-1" :class="[isSidebarExpanded ? 'lg:m-0' : 'lg:ml-20']">
-      <div class="content-wrapper">
-        <!-- Main navbar -->
-        <MainNavBar />
-        <!-- /main navbar -->
-        <div class="content-inner">
-          <RouterView />
+
+  <div class="page-content flex relative min-w-[320px]" v-if="isSynced">
+    <template v-if="isLogin">
+      <!-- Main sidebar -->
+      <MainSideBar/>
+
+      <!-- Main content -->
+      <div class="main-content" :class="[isSidebarExpanded ? 'lg:m-0' : 'lg:ml-20']">
+        <div class="content-wrapper">
+          <!-- Main navbar -->
+          <MainNavBar />
+          <!-- /main navbar -->
+          <div class="content-inner">
+            <RouterView />
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <!--- 로그인이 안되어 있을 경우 -->
+    <template v-else>
+      <LoginForm />
+    </template>
+
+  </div>
+  <div v-else>
+    <p>정보 로딩중</p>
   </div>
 </template>
 
@@ -35,11 +59,22 @@ const { isSidebarExpanded } = storeToRefs(menuStore);
 .page-content {
   height: 100vh; /* 전체 높이 */
   overflow: hidden; /* 스크롤 숨김 */
+  background-color: #f1f4f9;
 }
 
-.flex-1 {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; /* 메인 콘텐츠 영역 스크롤 */
+.main-content {
+  flex              : 1;
+  display           : flex;
+  flex-direction    : column;
+  overflow-y        : auto; /* 메인 콘텐츠 영역 스크롤 */
 }
+
+.content-inner
+{
+  word-wrap       : break-word;
+  overflow-wrap   : break-word;
+  word-break      : break-all;
+  padding         : 20px;
+}
+
 </style>

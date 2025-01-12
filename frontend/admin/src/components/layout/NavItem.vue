@@ -15,12 +15,12 @@
 <script setup>
 import {computed} from "vue";
 import { storeToRefs } from "pinia";
-import {useMenuStore} from "@/stores/menuStore.js";
+import {useLayoutStore} from "@/stores/layoutStore.js";
 import {PhLayout} from "@phosphor-icons/vue";
 
 
-const menuStore = useMenuStore();
-const { isSidebarExpanded, isSidebarHovered } = storeToRefs(menuStore);
+const layoutStore = useLayoutStore();
+const { isSidebarExpanded, isSidebarHovered } = storeToRefs(layoutStore);
 
 const props = defineProps({
   title: String,

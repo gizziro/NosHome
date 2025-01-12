@@ -54,7 +54,7 @@ public class ModuleHelper
     public List<ModuleTypeDto> getModuleDtos(BaseModule.ModuleType moduleType)
     {
         return moduleMap.get(moduleType).values().stream().map(
-                m -> new ModuleTypeDto(m.getModuleId(), m.getModuleName())
+                m -> new ModuleTypeDto(m.getModuleType().toString(), m.getModuleName(), m.getModuleId(), m.getDescription())
         ).toList();
     }
 }

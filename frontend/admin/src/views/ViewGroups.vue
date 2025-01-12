@@ -1,9 +1,12 @@
 <script setup>
 
+import CardContent from "@/components/common/card/CardContent.vue";
 </script>
 
 <template>
-  <p>Groups</p>
+  <CardContent>
+
+  </CardContent>
 </template>
 
 <style scoped>

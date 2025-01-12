@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ViewMenus from '../views/ViewMenus.vue'
+import ViewMenus from '../views/ViewSitemap.vue'
 import ViewMembers from '../views/ViewMembers.vue'
 import ViewGroups from '../views/ViewGroups.vue'
 
@@ -15,7 +15,7 @@ const router = createRouter({
     {
       path: '/menus',
       name: 'menus',
-      component: () => import('../views/ViewMenus.vue'),
+      component: () => import('../views/ViewSitemap.vue'),
     },
     {
       path: '/members',

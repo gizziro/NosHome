@@ -14,14 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Result {
+    private String          status;
     private String          code;
-
     private String          message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String          description;
 
-    public static Result of(String code, String message, String description){
+    public static Result of(String status, String code, String message, String description){
         return Result.builder()
+                .status(status)
                 .code(code)
                 .message(message)
                 .description(description).build();
@@ -29,6 +30,7 @@ public class Result {
 
     public static Result OK(){
         return Result.builder()
+                .status("200")
                 .code(CommonErrorCode.OK.getCode())
                 .message(CommonErrorCode.OK.getMessage())
                 .build();
@@ -36,6 +38,7 @@ public class Result {
 
     public static Result ERROR(IErrorCode errorCodeIfs){
         return Result.builder()
+                .status(errorCodeIfs.getStatus())
                 .code(errorCodeIfs.getCode())
                 .message(errorCodeIfs.getMessage())
                 .description(errorCodeIfs.getDescription())
@@ -44,6 +47,7 @@ public class Result {
 
     public static Result ERROR(IErrorCode errorCodeIfs, Throwable tx){
         return Result.builder()
+                .status(errorCodeIfs.getStatus())
                 .code(errorCodeIfs.getCode())
                 .message(errorCodeIfs.getMessage())
                 .description(tx.getLocalizedMessage())
@@ -52,6 +56,7 @@ public class Result {
 
     public static Result ERROR(IErrorCode errorCodeIfs, String description){
         return Result.builder()
+                .status(errorCodeIfs.getStatus())
                 .code(errorCodeIfs.getCode())
                 .message(errorCodeIfs.getDescription())
                 .description(description)

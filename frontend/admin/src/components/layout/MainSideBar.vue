@@ -2,15 +2,15 @@
 import { ref, computed } from "vue";
 import { PhArrowsLeftRight, PhX } from "@phosphor-icons/vue";
 import { storeToRefs } from "pinia";
-import NavItem from "@/components/common/NavItem.vue";
-import {useMenuStore} from "@/stores/menuStore.js";
+import NavItem from "@/components/layout/NavItem.vue";
+import {useLayoutStore} from "@/stores/layoutStore.js";
 
-const menuStore = useMenuStore();
-const { isSidebarExpanded, isSidebarHovered, isMobileSidebarVisible} = storeToRefs(menuStore);
+const layoutStore = useLayoutStore();
+const { isSidebarExpanded, isSidebarHovered, isMobileSidebarVisible} = storeToRefs(layoutStore);
 
 // 사이드바 토글 핸들러
 const sidebarResizeBtn = () => {
-  isSidebarHovered.value = false;
+  isSidebarHovered.value  = false;
   isSidebarExpanded.value = !isSidebarExpanded.value;
 };
 
@@ -21,21 +21,24 @@ const nav_item_header = computed(() => {
   };
 });
 
+const mouseenterEvt = () => {
+  isSidebarHovered.value = true;
+};
+
 </script>
 
 
 <template>
-  <div class="h-full lg:block"
+  <div class="sidebar h-full lg:block"
        :class="[isSidebarExpanded ? 'lg:w-[18.75rem]' : 'absolute w-20',
        isSidebarHovered ? 'w-[18.75rem]' : 'w-20',
        isMobileSidebarVisible ? 'block absolute w-[18.75rem]' : 'hidden'
-
   ]">
     <!-- Sidebar -->
     <div
         :class="[
         'flex flex-col bg-[#252b36] text-white h-full']"
-        @mouseenter="isSidebarHovered = true"
+        @mouseenter="mouseenterEvt"
         @mouseleave="isSidebarHovered = false"
     >
       <!-- Sidebar header -->
@@ -94,6 +97,10 @@ const nav_item_header = computed(() => {
 </template>
 
 <style scoped>
+.sidebar{
+  z-index: 99;
+}
+
 .nav {
   display       : flex;
   flex-wrap     : wrap;

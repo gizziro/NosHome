@@ -11,6 +11,7 @@ export default defineConfig({
     vueDevTools(),
   ],
   server: {
+    host: true,  // 또는 '0.0.0.0'
     proxy: {
       '/api': {
         target: 'http://localhost:9999', // 백엔드 서버 주소

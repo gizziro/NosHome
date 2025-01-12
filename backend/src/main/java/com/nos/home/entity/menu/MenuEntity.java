@@ -17,6 +17,7 @@ public class MenuEntity extends BaseTimeEntity {
     // 메뉴 아이템 Sequence 번호
     //------------------------------------------------------------------------------------------------------------------
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long                        menuSeq;
 
     //------------------------------------------------------------------------------------------------------------------

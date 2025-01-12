@@ -12,8 +12,8 @@ const filesToCopy = [
     dest: path.resolve('../../backend/src/main/resources/static/js/admin/ViewGroups.js'),
   },
   {
-    src: path.resolve('dist/ViewMenus.js'),
-    dest: path.resolve('../../backend/src/main/resources/static/js/admin/ViewMenus.js'),
+    src: path.resolve('dist/ViewSitemap.js'),
+    dest: path.resolve('../../backend/src/main/resources/static/js/admin/ViewSitemap.js'),
   },
   {
     src: path.resolve('dist/ViewMembers.js'),

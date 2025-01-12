@@ -1,1 +1,1 @@
-import{_ as e,c,o}from"./admin.js";const r={};function n(s,t){return o(),c("p",null,"Groups")}const a=e(r,[["render",n]]);export{a as default};
+import{af as r,o as a,c as t,a as s,C as o}from"./admin.js";const n={},_={class:"card"};function d(c,e){return a(),t("div",_,e[0]||(e[0]=[s("div",{class:"card-header"},[s("h5",{class:"mb-0"},"Basic examples")],-1),s("div",{class:"card-body"},null,-1)]))}const l=r(n,[["render",d],["__scopeId","data-v-b7ee6705"]]),f={__name:"ViewGroups",setup(c){return(e,i)=>(a(),o(l))}};export{f as default};

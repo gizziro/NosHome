@@ -8,4 +8,6 @@ import lombok.NoArgsConstructor;
 public class ModuleTypeDto {
     public String type;
     public String name;
+    public String moduleId;
+    public String description;
 }
