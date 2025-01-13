@@ -7,7 +7,7 @@
         :list="menus"
         handle=".handle"
         :group="{ name: 'menu' }"
-        item-key="id"
+        item-key="menuSeq"
         @change="$emit('update:menus', menus)"
     >
       <template #item="{ element }">

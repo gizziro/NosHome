@@ -2,15 +2,15 @@ package com.nos.home.common.module.entity;
 
 
 import com.nos.home.entity.common.BaseTimeEntity;
+import com.nos.home.entity.menu.MenuEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_module_instance")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ModuleInstanceEntity extends BaseTimeEntity {
     @Id
@@ -53,4 +53,16 @@ public class ModuleInstanceEntity extends BaseTimeEntity {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    public static ModuleInstanceEntity of(MenuEntity menuEntity)
+    {
+        return ModuleInstanceEntity.builder()
+                .moduleId(menuEntity.getModuleId())                 // 모듈 ID
+                .instanceId(menuEntity.getInstanceId())             // 인스턴스 ID
+                .instanceName(menuEntity.getTitle())                // 인스턴스 이름
+                .configData("{}")                                   // 설정 정보
+                .enabled(true)                                      // 활성화 여부
+                .build();
+    }
+
 }

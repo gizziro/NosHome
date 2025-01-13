@@ -1,17 +1,21 @@
 package com.nos.home.entity.menu;
 
+import com.nos.home.admin.dto.sitemap.AdMenuRegisterDto;
 import com.nos.home.entity.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tb_menu")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MenuEntity extends BaseTimeEntity {
     //------------------------------------------------------------------------------------------------------------------
     // 메뉴 아이템 Sequence 번호
@@ -105,4 +109,26 @@ public class MenuEntity extends BaseTimeEntity {
     // 메뉴 활성화 여부
     //------------------------------------------------------------------------------------------------------------------
     private Boolean                     enabled = true;
+
+    //------------------------------------------------------------------------------------------------------------------
+    // 메뉴 등록
+    //------------------------------------------------------------------------------------------------------------------
+    public static MenuEntity of(AdMenuRegisterDto adMenuRegisterDto)
+    {
+        MenuEntity menu = MenuEntity.builder()
+                .sitemapSeq(adMenuRegisterDto.getSitemapSeq())          // sitemap_seq;
+                .parentMenuSeq(null)                                    // 상위 메뉴 ID
+                .moduleId(adMenuRegisterDto.getModuleId())              // 모듈 ID
+                .instanceId(UUID.randomUUID().toString())               // 인스턴스 ID
+                .title(adMenuRegisterDto.getTitle())                    // 메뉴명
+                .url(adMenuRegisterDto.getUrl())                        // URL
+                .target(adMenuRegisterDto.getTarget())                  // 타겟
+                .description(adMenuRegisterDto.getDescription())        // 설명
+                .icon(null)                                             // 아이콘
+                .depth(1)                                               // 깊이
+                .position(0)                                            // 메뉴 순서
+                .enabled(true)                                          // 활성화 여부
+                .build();
+        return menu;
+    }
 }

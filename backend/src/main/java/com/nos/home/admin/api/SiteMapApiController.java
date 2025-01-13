@@ -1,5 +1,6 @@
 package com.nos.home.admin.api;
 
+import com.nos.home.admin.dto.sitemap.AdMenuListDto;
 import com.nos.home.admin.dto.sitemap.AdMenuRegisterDto;
 import com.nos.home.common.response.ApiResponse;
 import com.nos.home.common.security.CurrentUser;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -43,15 +45,36 @@ public class SiteMapApiController
     // [사이트맵 메뉴 목록 조회]
     //------------------------------------------------------------------------------------------------------------------
     @GetMapping("/{sitemapSeq}")
-    public ApiResponse<List<MenuEntity>> getSiteMap(@PathVariable Long sitemapSeq)
+    public ApiResponse<List<AdMenuListDto>> getSiteMap(@PathVariable Long sitemapSeq)
     {
+        /// 1. 사이트맵 유효성 체크
+
         List<MenuEntity> menuEntities = siteMapService.getAllMenusFromSiteMap(sitemapSeq);
-        return ApiResponse.OK(menuEntities);
+
+        List<AdMenuListDto> retList = new ArrayList<>();
+        for(MenuEntity menuEntity : menuEntities)
+        {
+            AdMenuListDto adMenuListDto = AdMenuListDto.of(menuEntity);
+            retList.add(adMenuListDto);
+        }
+
+        return ApiResponse.OK(retList);
     }
 
-    @PostMapping("/menu/register")
-    public ResponseEntity<MenuEntity> registerMenu(@RequestBody AdMenuRegisterDto adMenuRegisterDto) {
+
+    //------------------------------------------------------------------------------------------------------------------
+    //
+    //------------------------------------------------------------------------------------------------------------------
+    @PostMapping("/{sitemapSeq}/register")
+    public ResponseEntity<MenuEntity> registerMenu(@PathVariable Long sitemapSeq, @RequestBody AdMenuRegisterDto adMenuRegisterDto)
+    {
+
+
         MenuEntity newMenu = siteMapService.createMenu(adMenuRegisterDto);
         return ResponseEntity.ok(newMenu);
     }
+
+
+
+
 }

@@ -5,15 +5,17 @@ import MainSideBar from "@/components/layout/MainSideBar.vue";
 import { RouterView } from "vue-router";
 
 import MainNavBar from "@/components/layout/MainNavBar.vue";
-
+import LoginForm from "@/components/login/LoginForm.vue";
 //----------------------------------------------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------------------------------------------
 import {useAuthStore} from "@/stores/authStore.js";
 import {useLayoutStore} from "@/stores/layoutStore.js";
 import {useCommonStore} from "@/stores/commonStore.js";
-import LoginForm from "@/components/login/LoginForm.vue";
 
+//----------------------------------------------------------------------------------------------------------------------
+// [상태관리 스토어 생성]
+//----------------------------------------------------------------------------------------------------------------------
 const authStore = useAuthStore();
 const commonStore = useCommonStore();
 const layoutStore = useLayoutStore();
@@ -25,7 +27,6 @@ const { isSidebarExpanded } = storeToRefs(layoutStore);
 </script>
 
 <template>
-
   <div class="page-content flex relative min-w-[320px]" v-if="isSynced">
     <template v-if="isLogin">
       <!-- Main sidebar -->

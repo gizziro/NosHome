@@ -27,6 +27,8 @@
           />
         </div>
 
+        {{ menuList}}
+
         <div class="bg-white rounded-lg shadow mt-3">
           <div class="p-3">
             <NestedMenu :menus="menuList"/>
@@ -64,6 +66,7 @@ import MenuRegisterDialog from "@/components/sitemap/MenuRegisterDialog.vue";
 //----------------------------------------------------------------------------------------------------------------------
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
+
 //----------------------------------------------------------------------------------------------------------------------
 
 //======================================================================================================================
@@ -74,6 +77,8 @@ import Dialog from 'primevue/dialog';
 const sitemapStore = useSitemapStore();
 sitemapStore.fetchAllSiteMap();
 const { sitemapList } = storeToRefs(sitemapStore);
+
+
 //----------------------------------------------------------------------------------------------------------------------
 
 //======================================================================================================================
@@ -83,7 +88,16 @@ const { sitemapList } = storeToRefs(sitemapStore);
 const isSitemapSelected = ref(false);
 const selectedSitemapSeq = ref(0);
 
-const onSelectSitemapHandler = (sitemapSeq) => {
+//----------------------------------------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------------------------------------
+const onSelectSitemapHandler = async (sitemapSeq) => {
+  console.log("사이트맵 선택")
+  menuList.value = await sitemapStore.fetchSiteMapMenu(sitemapSeq);
+
+  console.log("========================================")
+  console.log(menuList.value)
+
   isSitemapSelected.value   = true;
   selectedSitemapSeq.value  = sitemapSeq;
 }
@@ -93,15 +107,19 @@ const onSelectSitemapHandler = (sitemapSeq) => {
 // 메뉴 추가 관련
 //======================================================================================================================
 const menuVisible = ref(false);
+const menuList = ref([])
 
-const onMenuRegister = ({name, slug, moduleId, description }) => {
-  sitemapStore.registerMenu(selectedSitemapSeq.value, name, slug, moduleId, "_self", description)
-  alert('추가')
+const onMenuRegister = async ({name, slug, moduleId, description }) => {
+  await sitemapStore.registerMenu(selectedSitemapSeq.value, moduleId, name, slug, "_self", description)
+  
+
+  menuList.value = await sitemapStore.fetchSiteMapMenu(selectedSitemapSeq.value);
+  menuVisible.value = false;
 }
 
 
 
-const menuList = ref([
+const menuList2 = ref([
   {
     id: 1,
     name: "대시보드",

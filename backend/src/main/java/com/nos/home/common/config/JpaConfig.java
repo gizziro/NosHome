@@ -1,5 +1,6 @@
 package com.nos.home.common.config;
 
+import com.nos.home.common.security.details.AccountDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -20,7 +21,10 @@ public class JpaConfig {
             if (authentication == null || !authentication.isAuthenticated()) {
                 return Optional.empty(); // 익명 사용자의 경우 Optional.empty() 반환
             }
-            return Optional.of(authentication.getName());
+
+            AccountDto accountDto = (AccountDto) authentication.getPrincipal();
+
+            return Optional.of(accountDto.getUserId());
         };
     }
 }

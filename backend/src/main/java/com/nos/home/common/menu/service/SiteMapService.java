@@ -2,23 +2,30 @@ package com.nos.home.common.menu.service;
 
 import com.nos.home.admin.dto.sitemap.AdMenuRegisterDto;
 import com.nos.home.common.menu.repository.MenuRepository;
+import com.nos.home.common.module.entity.ModuleInstanceEntity;
+import com.nos.home.common.module.repository.ModuleInstanceRepository;
 import com.nos.home.entity.menu.MenuEntity;
 import com.nos.home.entity.menu.SiteMapEntity;
 import com.nos.home.common.menu.dto.SiteMapRequestDto;
 import com.nos.home.common.menu.repository.SiteMapRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
-public class SiteMapService {
-
-    private final SiteMapRepository     siteMapRepository;      // 사이트맵 레포지토리
-    private final MenuRepository        menuRepository;         // 메뉴 레포지토리
+public class SiteMapService
+{
+    //------------------------------------------------------------------------------------------------------------------
+    private final SiteMapRepository             siteMapRepository;          // 사이트맵 레포지토리
+    private final MenuRepository                menuRepository;             // 메뉴 레포지토리
+    private final ModuleInstanceRepository      moduleInstanceRepository;   // 모듈 인스턴스 레포지토리
+    //------------------------------------------------------------------------------------------------------------------
 
     @Transactional
     public Long createSiteMap(SiteMapRequestDto siteMapRequest) {
@@ -39,23 +46,24 @@ public class SiteMapService {
         return menuRepository.findBySitemapSeq(sitemapSeq);
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // [메뉴 등록] - 사이트맵에 메뉴를 등록한다.
+    //------------------------------------------------------------------------------------------------------------------
     @Transactional
     public MenuEntity createMenu(AdMenuRegisterDto adMenuRegisterDto) {
-        MenuEntity menu = new MenuEntity();
-        menu.setSitemapSeq(adMenuRegisterDto.getSitemapSeq());          // sitemap_seq;
-        menu.setParentMenuSeq(null);                                      // 상위 메뉴 ID
-        menu.setModuleId(adMenuRegisterDto.getModuleId());              // 모듈 ID
-        menu.setInstanceId(UUID.randomUUID().toString());               // 인스턴스 ID
-        menu.setTitle(adMenuRegisterDto.getTitle());                    // 메뉴명
-        menu.setUrl(adMenuRegisterDto.getUrl());                        // URL
-        menu.setTarget(adMenuRegisterDto.getTarget());                  // 타겟
-        menu.setDescription(adMenuRegisterDto.getDescription());        // 설명
-        menu.setIcon(null);                                             // 아이콘
-        menu.setDepth(1);                                               // 깊이
-        menu.setPosition(0);
-        menu.setEnabled(true);                                          // 활성화 여부
-
+        //--------------------------------------------------------------------------------------------------------------
+        // [신규 메뉴 등록]
+        //--------------------------------------------------------------------------------------------------------------
+        MenuEntity menu = MenuEntity.of(adMenuRegisterDto);
         menuRepository.save(menu);
+        log.info("New Menu: {}", menu);
+        //--------------------------------------------------------------------------------------------------------------
+        // [모듈 인스턴스 등록]
+        //--------------------------------------------------------------------------------------------------------------
+        ModuleInstanceEntity moduleInstance = ModuleInstanceEntity.of(menu);
+        log.info("New Module Instance: {}", moduleInstance);
+        moduleInstanceRepository.save(moduleInstance);
+
         return menu;
     }
 }

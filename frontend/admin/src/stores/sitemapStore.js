@@ -23,13 +23,25 @@ export const useSitemapStore = defineStore('sitemap', () =>
   // 메뉴 등록
   //--------------------------------------------------------------------------------------------------------------------
   const registerMenu = async (sitemapSeq, moduleId, title, url, target, description) => {
-    const {result, data} = await SitemapService.registerMenu({sitemapSeq, moduleId, title, url, target, description});
+    const {result, data} = await SitemapService.registerMenu(sitemapSeq, {sitemapSeq, moduleId, title, url, target, description});
     if (data)
     {
 
     }
   }
 
+  const fetchSiteMapMenu = async (sitemapSeq) => {
+    const {result, data} = await SitemapService.fetchSiteMapMenu(sitemapSeq);
+    console.log("hihi")
+    console.log(data);
+    if (data)
+    {
 
-  return { sitemapList, fetchAllSiteMap, registerMenu}
+    }
+    return data;
+  }
+
+
+
+  return { sitemapList, fetchAllSiteMap, registerMenu, fetchSiteMapMenu}
 })

@@ -2,7 +2,7 @@
 <template>
   <div
       class="flex items-center justify-between px-2 py-1 lg:p-2 bg-white border rounded-lg shadow-sm"
-      :class="{ 'opacity-60': !menu.isVisible }"
+      :class="{ 'opacity-60': !menu.enabled }"
   >
     <div class="flex items-center space-x-2 lg:space-x-4 flex-1">
       <svg
@@ -20,7 +20,7 @@
         />
       </svg>
       <div class="flex-1">
-        <p class="font-medium text-gray-800 text-xs lg:text-md">{{ menu.name }}</p>
+        <p class="font-medium text-gray-800 text-xs lg:text-md">{{ menu.title }}</p>
         <p class="text-gray-500 text-xs lg:text-md">{{ menu.url }}</p>
       </div>
     </div>
