@@ -2,7 +2,9 @@ package com.nos.home.common.menu.service;
 
 import com.nos.home.admin.dto.sitemap.AdMenuRegisterDto;
 import com.nos.home.common.menu.repository.MenuRepository;
-import com.nos.home.common.module.entity.ModuleInstanceEntity;
+import com.nos.home.common.util.MenuHelper;
+import com.nos.home.common.util.ModuleHelper;
+import com.nos.home.entity.module.ModuleInstanceEntity;
 import com.nos.home.common.module.repository.ModuleInstanceRepository;
 import com.nos.home.entity.menu.MenuEntity;
 import com.nos.home.entity.menu.SiteMapEntity;
@@ -14,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -26,6 +27,10 @@ public class SiteMapService
     private final MenuRepository                menuRepository;             // 메뉴 레포지토리
     private final ModuleInstanceRepository      moduleInstanceRepository;   // 모듈 인스턴스 레포지토리
     //------------------------------------------------------------------------------------------------------------------
+    // Helper 클래스
+    //------------------------------------------------------------------------------------------------------------------
+    private final ModuleHelper                  moduleHelper;               // 모듈 헬퍼
+    private final MenuHelper                    menuHelper;                 // 메뉴 헬퍼
 
     @Transactional
     public Long createSiteMap(SiteMapRequestDto siteMapRequest) {
@@ -56,13 +61,17 @@ public class SiteMapService
         //--------------------------------------------------------------------------------------------------------------
         MenuEntity menu = MenuEntity.of(adMenuRegisterDto);
         menuRepository.save(menu);
-        log.info("New Menu: {}", menu);
         //--------------------------------------------------------------------------------------------------------------
         // [모듈 인스턴스 등록]
         //--------------------------------------------------------------------------------------------------------------
         ModuleInstanceEntity moduleInstance = ModuleInstanceEntity.of(menu);
-        log.info("New Module Instance: {}", moduleInstance);
         moduleInstanceRepository.save(moduleInstance);
+        //--------------------------------------------------------------------------------------------------------------
+        // DTO 정보 등록 (URL Rewrite 인터셉터에서, 신규 메뉴를 바로 사용할 수 있도록, 메뉴 정보를 저장한다.)
+        //--------------------------------------------------------------------------------------------------------------
+        menuHelper.addMenu(menu);
+        moduleHelper.addModuleInstance(moduleInstance);
+
 
         return menu;
     }

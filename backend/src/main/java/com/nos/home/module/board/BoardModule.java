@@ -17,7 +17,7 @@ public class BoardModule extends BaseModule {
 
     @Override
     public String getModuleId() {
-        return "BOARD";
+        return "board";
     }
 
     @Override

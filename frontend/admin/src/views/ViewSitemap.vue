@@ -111,7 +111,7 @@ const menuList = ref([])
 
 const onMenuRegister = async ({name, slug, moduleId, description }) => {
   await sitemapStore.registerMenu(selectedSitemapSeq.value, moduleId, name, slug, "_self", description)
-  
+
 
   menuList.value = await sitemapStore.fetchSiteMapMenu(selectedSitemapSeq.value);
   menuVisible.value = false;

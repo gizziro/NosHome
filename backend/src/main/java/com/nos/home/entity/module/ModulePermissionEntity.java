@@ -1,4 +1,4 @@
-package com.nos.home.common.module.entity;
+package com.nos.home.entity.module;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,8 +1,9 @@
 package com.nos.home.common.module;
 
+import com.nos.home.common.util.MenuHelper;
 import com.nos.home.common.util.ModuleHelper;
-import com.nos.home.common.module.entity.ModuleEntity;
-import com.nos.home.common.module.entity.ModulePermissionEntity;
+import com.nos.home.entity.module.ModuleEntity;
+import com.nos.home.entity.module.ModulePermissionEntity;
 import com.nos.home.common.module.repository.ModulePermissionRepository;
 import com.nos.home.common.module.repository.ModuleRepository;
 import jakarta.annotation.PostConstruct;
@@ -24,18 +25,25 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class ModuleManager {
-    private final ApplicationContext            applicationContext;
-    private final ModuleRepository              moduleRepository;
-    private final ModulePermissionRepository    permissionRepository;
-    private final ModuleHelper                  moduleHelper;
+    ///=================================================================================================================
+    /// [1] 필드 및 레포지토리
+    ///=================================================================================================================
+    private final ApplicationContext                applicationContext;
+    private final ModuleRepository                  moduleRepository;
+    private final ModulePermissionRepository        permissionRepository;
+    private final ModuleHelper                      moduleHelper;
+    private final MenuHelper                        menuHelper;
 
     @PostConstruct
     public void initialize() {
         log.debug("========================================");
         //--------------------------------------------------------------------------------------------------------------
-        // 모듈 목록 초기화
+        // 모듈 목록 및 모듈 인스턴스 초기화
         //--------------------------------------------------------------------------------------------------------------
-        moduleHelper.initializeModules();
+        moduleHelper.initialize();
+        menuHelper.initialize();
+
+
 
         syncModules(moduleHelper.getModules());
         log.debug("========================================");

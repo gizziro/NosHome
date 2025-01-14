@@ -1,6 +1,7 @@
 package com.nos.home.entity.menu;
 
 import com.nos.home.admin.dto.sitemap.AdMenuRegisterDto;
+import com.nos.home.common.menu.dto.MenuDto;
 import com.nos.home.entity.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -109,6 +110,31 @@ public class MenuEntity extends BaseTimeEntity {
     // 메뉴 활성화 여부
     //------------------------------------------------------------------------------------------------------------------
     private Boolean                     enabled = true;
+
+
+    ///=================================================================================================================
+    /// Static Methods
+    ///=================================================================================================================
+
+    //------------------------------------------------------------------------------------------------------------------
+    // MenuEntity -> MenuDto
+    //------------------------------------------------------------------------------------------------------------------
+    public static MenuDto toDto(MenuEntity menu)
+    {
+        return MenuDto.builder()
+                .menuSeq(menu.getMenuSeq())
+                .sitemapSeq(menu.getSitemapSeq())
+                .parentMenuSeq(menu.getParentMenuSeq())
+                .moduleId(menu.getModuleId())
+                .instanceId(menu.getInstanceId())
+                .title(menu.getTitle())
+                .url(menu.getUrl())
+                .target(menu.getTarget())
+                .description(menu.getDescription())
+                .icon(menu.getIcon())
+                .build();
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
     // 메뉴 등록

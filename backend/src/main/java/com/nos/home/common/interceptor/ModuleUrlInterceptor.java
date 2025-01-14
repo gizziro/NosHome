@@ -1,5 +1,7 @@
 package com.nos.home.common.interceptor;
 
+import com.nos.home.common.menu.dto.MenuDto;
+import com.nos.home.common.util.MenuHelper;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,34 +16,56 @@ import java.util.regex.Pattern;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ModuleUrlInterceptor implements HandlerInterceptor {
+public class ModuleUrlInterceptor implements HandlerInterceptor
+{
+    ///=================================================================================================================
+    /// [1] 필드 및 레포지토리
+    ///=================================================================================================================
+    private final       MenuHelper          menuHelper;
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        //--------------------------------------------------------------------------------------------------------------
+        //
+        //--------------------------------------------------------------------------------------------------------------
         String originalUrl = request.getRequestURI();
-        log.debug("Intercepting request for path: {}", originalUrl);
+        log.debug("[URL ReWrite]: {}", originalUrl);
 
-        // 모듈 URL 패턴인 경우에만 처리
+        //--------------------------------------------------------------------------------------------------------------
+        // 이미 처리된 URL인 경우, 다른 인터셉터 실행 중지
+        //--------------------------------------------------------------------------------------------------------------
+        if(request.getAttribute("originalUrl") != null)
+        {
+            return true;
+        }
+
+        //--------------------------------------------------------------------------------------------------------------
+        // URL 패턴 분석 ==> (Slug 추출 및 메뉴 정보 조회)
+        //--------------------------------------------------------------------------------------------------------------
         Matcher matcher = Pattern.compile("/([^/]+)/(.*)").matcher(originalUrl);
-        if (matcher.find()) {
+
+        if (matcher.find())
+        {
             String slug                 = matcher.group(1);
             String remainingPath        = matcher.group(2);
 
             log.debug("Slug: {}, Remaining path: {}", slug, remainingPath);
-            try {
-
-                if(slug.equals("gizzi") || slug.equals("heero"))
+            try
+            {
+                //------------------------------------------------------------------------------------------------------
+                // "Slug" 정보를 바탕으로 메뉴가 존재하는지 체크
+                //------------------------------------------------------------------------------------------------------
+                MenuDto menuDto = menuHelper.checkSlug(slug);
+                if(menuDto != null)
                 {
-                    //--------------------------------------------------------------------------------------------------
-                    // 내부 URL 생성
-                    //--------------------------------------------------------------------------------------------------
-                    String internalUrl = createInternalUrl(slug, remainingPath);
-                    log.debug("Rewriting URL from {} to {}", originalUrl, internalUrl);
-
+                    String internalUrl = createInternalUrl(menuDto, remainingPath);
+                    log.debug("URL 주소 변경 : [{} ==> {}]", originalUrl, internalUrl);
                     //--------------------------------------------------------------------------------------------------
                     // 원본 URL과 메뉴 정보 저장
                     //--------------------------------------------------------------------------------------------------
-                    request.setAttribute("originalUrl", originalUrl);
+                    request.setAttribute("originalUrl",     originalUrl);
+                    request.setAttribute("instanceId",  menuDto.getInstanceId());
 
                     //--------------------------------------------------------------------------------------------------
                     // 내부 URL로 포워딩
@@ -61,18 +85,18 @@ public class ModuleUrlInterceptor implements HandlerInterceptor {
                 throw new RuntimeException("Error processing URL rewrite", e);
             }
         }
-
         return true;
     }
 
-    private String createInternalUrl(String slug, String remainingPath) {
-        String modulePrefix = switch (slug)
-        {
-            case "gizzi" -> "/board";
-            case "heero" -> "/blog";
-            default -> throw new IllegalStateException("Unknown module type: " + slug);
-        };
-
-        return modulePrefix + "/" + slug + "/" + remainingPath;
+    //------------------------------------------------------------------------------------------------------------------
+    // Slug 정보를 바탕으로 내부 URL 생성
+    //------------------------------------------------------------------------------------------------------------------
+    private String createInternalUrl(MenuDto menuDto, String remainingPath) {
+        //--------------------------------------------------------------------------------------------------------------
+        // 1. Slug 정보 추출
+        //--------------------------------------------------------------------------------------------------------------
+        String slug             = menuDto.getUrl();
+        String modulePrefix     = menuDto.getModuleId();
+        return "/" + modulePrefix + "/" + slug + "/" + remainingPath; // 앞에 "/" 추가
     }
 }
